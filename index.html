@@ -50,7 +50,7 @@
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
-        /* Glowing badge */
+        /* Glowing badge - now a link */
         .blog-badge {
             display: inline-block;
             border: 1px solid #ffffff;
@@ -66,6 +66,7 @@
                 0 0 20px rgba(255, 255, 255, 0.1),
                 inset 0 0 20px rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
+            text-decoration: none;
         }
 
         /* Slight hover effect to make it interactive */
@@ -105,10 +106,13 @@
     <div class="container">
         <h1>SLEXPOSE</h1>
         <p class="tagline">Sri Lanka · Security · Exposed</p>
-        <div class="blog-badge">📄 BLOG 1 — DROPPING SOON</div>
+        
+        <a href="/blog/post-01-sri-lanka-attack-surface/" class="blog-badge">
+            📄 READ BLOG 1 — SRI LANKA'S EXPOSED DEVICES
+        </a>
         <p class="subtext">
             Investigating public data exposure in Sri Lanka.<br />
-            First post coming soon. Stay tuned.
+            First post is now live. Read the full analysis above.
         </p>
         <div class="footer">ZNTRAQ &bull; 2026</div>
     </div>
