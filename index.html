@@ -10,10 +10,11 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #fff;
+            background: #000000;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,51 +22,82 @@
             text-align: center;
             padding: 20px;
         }
+
         .container {
             max-width: 600px;
         }
+
+        /* Glowing white title */
         h1 {
             font-size: 4rem;
             font-weight: 700;
             letter-spacing: 4px;
-            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ffffff;
+            text-shadow:
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.6),
+                0 0 40px rgba(255, 255, 255, 0.3),
+                0 0 80px rgba(255, 255, 255, 0.1);
             margin-bottom: 1rem;
         }
+
+        /* Subtle glow on tagline */
         .tagline {
             font-size: 1.5rem;
-            color: #aaa;
+            color: #cccccc;
             margin-bottom: 2rem;
             font-weight: 300;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
+
+        /* Glowing badge */
         .blog-badge {
             display: inline-block;
-            border: 2px solid #ff6b6b;
+            border: 1px solid #ffffff;
             padding: 12px 30px;
             border-radius: 50px;
             font-size: 1.2rem;
             font-weight: 600;
-            color: #ff6b6b;
+            color: #ffffff;
             letter-spacing: 2px;
             margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            box-shadow:
+                0 0 20px rgba(255, 255, 255, 0.1),
+                inset 0 0 20px rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
         }
+
+        /* Slight hover effect to make it interactive */
+        .blog-badge:hover {
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Subtext - lighter gray for readability */
         .subtext {
-            color: #555;
+            color: #aaaaaa;
             font-size: 0.9rem;
             line-height: 1.6;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
         }
+
         .subtext a {
-            color: #ff6b6b;
+            color: #ffffff;
             text-decoration: none;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
+
         .subtext a:hover {
             text-decoration: underline;
         }
+
+        /* Footer - very subtle */
         .footer {
             margin-top: 3rem;
-            color: #333;
+            color: #444444;
             font-size: 0.8rem;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
