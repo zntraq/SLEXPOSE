@@ -1,4 +1,3 @@
-
 const TRAP_PATHS = [
   '/.env',
   '/.env.local',
@@ -31,8 +30,8 @@ function getTrapResponse(path) {
       database: { host: 'localhost', user: 'root', password: `rootpass${fakeKey()}` },
       api: { key: `sk_test_${fakeKey()}` }
     }, null, 2),
-    '/wp-config.php': `<?php\ndefine('DB_NAME', 'wordpress');\ndefine('DB_USER', 'wp_user');\ndefine('DB_PASSWORD', 'wp_pass_${fakeKey()}');\ndefine('DB_HOST', 'localhost');\n// Salts omitted for brevity`,
-    '/backup.sql': `-- MySQL dump\nCREATE DATABASE users;\nINSERT INTO users (email, password) VALUES ('admin@example.com', '${fakeKey()}');\n-- Dump completed`,
+    '/wp-config.php': `<?php\ndefine('DB_NAME', 'wordpress');\ndefine('DB_USER', 'wp_user');\ndefine('DB_PASSWORD', 'wp_pass_${fakeKey()}');\ndefine('DB_HOST', 'localhost');`,
+    '/backup.sql': `-- MySQL dump\nCREATE DATABASE users;\nINSERT INTO users (email, password) VALUES ('admin@example.com', '${fakeKey()}');`,
     '/.aws/credentials': `[default]\naws_access_key_id = AKIA${fakeKey().toUpperCase()}\naws_secret_access_key = ${fakeKey()}${fakeKey()}`,
     '/.git/config': `[core]\n\trepositoryformatversion = 0\n\tfilemode = true\n\tbare = false\n[remote "origin"]\n\turl = https://github.com/victim/secret-repo.git\n\tfetch = +refs/heads/*:refs/remotes/origin/*`,
   };
@@ -64,24 +63,6 @@ async function logRequest(request, path, env, botScore) {
   };
 
   console.log(JSON.stringify(logEntry));
-
-  if (env.WEBHOOK_URL) {
-    try {
-      const alertMsg = {
-        content: `🚨 **SLEXPOSE HONEYPOT TRIGGERED**\n\`\`\`\nIP: ${ip}\nPath: ${path}\nUser-Agent: ${userAgent}\nCountry: ${country}\nBot Score: ${botScore ?? 'N/A'}\nTime: ${logEntry.timestamp}\n\`\`\``
-      };
-      await fetch(env.WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(alertMsg)
-      });
-    } catch (e) {
-     
-      console.error('Webhook failed:', e.message);
-    }
-  }
-
-  
 }
 
 async function tarPit(seconds = 8) {
@@ -115,17 +96,16 @@ export async function onRequest(context) {
 
   let botScore = null;
   if (request.cf && request.cf.botManagement) {
-    botScore = request.cf.botManagement.score; 
+    botScore = request.cf.botManagement.score;
   }
 
   const isTrap = TRAP_PATHS.some(trap => path.startsWith(trap));
 
   if (isTrap) {
-    // Log the attack
     await logRequest(request, path, env, botScore);
 
     if (botScore !== null && botScore < 30) {
-      await tarPit(8); // 8-second delay to waste bot's time
+      await tarPit(8);
     }
 
     const fakeContent = getTrapResponse(path);
@@ -162,5 +142,5 @@ export async function onRequest(context) {
     });
   }
 
-=  return next();
+  return next();
 }
