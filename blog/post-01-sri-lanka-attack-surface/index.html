@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sri Lanka Has 20,866 Internet-Facing Hosts | SLEXPOSE</title>
+<meta name="description" content="Using only public OSINT data, we mapped Sri Lanka's internet-facing attack surface. 20,866 devices. 1,422 Telnet servers. 218 hosts on a protocol deprecated in 2015. The numbers are alarming.">
+<meta property="og:title" content="Sri Lanka Has 20,866 Internet-Facing Hosts">
+<meta property="og:description" content="A deep-dive into Sri Lanka's public internet exposure using public OSINT data. No hacking. Just looking.">
+<meta property="og:type" content="article">
+<meta name="robots" content="index, follow">
+<meta name="author" content="ZNTRAQ">
+<link rel="canonical" href="https://slexpose.pages.dev/blog/post-01-sri-lanka-attack-surface">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Sri Lanka Has 20,866 Devices Exposed to the Open Internet. Here's What We Found",
+  "description": "Using only public OSINT data, we mapped Sri Lanka's internet-facing attack surface.",
+  "datePublished": "2026-08-26",
+  "dateModified": "2026-08-26",
+  "publisher": {
+    "@type": "Organization",
+    "name": "SLEXPOSE",
+    "url": "https://slexpose.pages.dev"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://slexpose.pages.dev/blog/post-01-sri-lanka-attack-surface"
+  }
+}
+</script>
+
+<style>
+  :root {
+    --bg: #050505;
+    --surface: #0D0D0D;
+    --surface-2: #111111;
+    --border: #1C1C1C;
+    --border-sub: #111111;
+    --text: #FFFFFF;
+    --text-muted: #888888;
+    --text-dim: #3A3A3A;
+    --accent: #FFFFFF;
+    --accent-glow: rgba(255,255,255,0.05);
+    --accent-border: rgba(255,255,255,0.12);
+    --tag-bg: #0D0D0D;
+    --code-bg: #000000;
+    --good: #FFFFFF;
+    --warn: #AAAAAA;
+    --danger: #FFFFFF;
+    --crit: #FFFFFF;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #FFFFFF;
+      --surface: #F5F5F5;
+      --surface-2: #EEEEEE;
+      --border: #DDDDDD;
+      --border-sub: #E8E8E8;
+      --text: #000000;
+      --text-muted: #555555;
+      --text-dim: #AAAAAA;
+      --accent: #000000;
+      --accent-glow: rgba(0,0,0,0.04);
+      --accent-border: rgba(0,0,0,0.15);
+      --tag-bg: #F0F0F0;
+      --code-bg: #F8F8F8;
+      --good: #000000;
+      --warn: #555555;
+      --danger: #000000;
+      --crit: #000000;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --surface-2: #EEEEEE;
+    --border: #DDDDDD;
+    --border-sub: #E8E8E8;
+    --text: #000000;
+    --text-muted: #555555;
+    --text-dim: #AAAAAA;
+    --accent: #000000;
+    --accent-glow: rgba(0,0,0,0.04);
+    --accent-border: rgba(0,0,0,0.15);
+    --tag-bg: #F0F0F0;
+    --code-bg: #F8F8F8;
+    --good: #000000;
+    --warn: #555555;
+    --danger: #000000;
+    --crit: #000000;
+  }
+  :root[data-theme="dark"] {
+    --bg: #050505;
+    --surface: #0D0D0D;
+    --surface-2: #111111;
+    --border: #1C1C1C;
+    --border-sub: #111111;
+    --text: #FFFFFF;
+    --text-muted: #888888;
+    --text-dim: #3A3A3A;
+    --accent: #FFFFFF;
+    --accent-glow: rgba(255,255,255,0.05);
+    --accent-border: rgba(255,255,255,0.12);
+    --tag-bg: #0D0D0D;
+    --code-bg: #000000;
+    --good: #FFFFFF;
+    --warn: #AAAAAA;
+    --danger: #FFFFFF;
+    --crit: #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Layout ─── */
+  .site-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .site-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .site-series {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .article-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .series-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .series-tag::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .article-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(22px, 4.5vw, 38px);
+    font-weight: 600;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .article-title .accent { color: var(--accent); }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .meta-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .article-lede {
+    font-size: 17px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 680px;
+  }
+
+  /* ─── Hero stat ─── */
+  .hero-stat-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 32px 0 0;
+  }
+  .hstat {
+    background: var(--surface);
+    padding: 20px 18px;
+    text-align: center;
+  }
+  .hstat-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(20px, 3.5vw, 30px);
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hstat-num.danger {
+    color: #FFFFFF;
+    text-shadow: 0 0 18px rgba(255,255,255,0.9), 0 0 40px rgba(255,255,255,0.5);
+  }
+  .hstat-num.warn {
+    color: #FFFFFF;
+    text-shadow: 0 0 14px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.3);
+  }
+  .hstat-num.crit {
+    color: #FFFFFF;
+    text-shadow: 0 0 22px rgba(255,255,255,1), 0 0 50px rgba(255,255,255,0.6);
+  }
+  .hstat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* ─── Body prose ─── */
+  .prose { max-width: 720px; }
+  .prose h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 48px 0 16px;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .prose h2::before {
+    content: '// ';
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .prose p {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.75;
+    font-size: 15.5px;
+  }
+  .prose p strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .prose a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-border);
+  }
+
+  /* ─── Callout boxes ─── */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 28px 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+  .callout.danger-box {
+    border-left-color: var(--danger);
+    background: rgba(239,68,68,0.04);
+  }
+  .callout.warn-box {
+    border-left-color: var(--warn);
+    background: rgba(245,158,11,0.04);
+  }
+  .callout strong {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .callout.danger-box strong { color: var(--text); }
+  .callout.warn-box strong { color: var(--text-muted); }
+
+  /* ─── Charts ─── */
+  .chart-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 28px 0;
+    overflow-x: auto;
+  }
+  .chart-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .chart-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Horizontal bar chart */
+  .hbar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .hbar-row { display: grid; grid-template-columns: 100px 1fr 64px; align-items: center; gap: 10px; }
+  .hbar-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .hbar-track {
+    background: var(--border-sub);
+    border-radius: 3px;
+    height: 22px;
+    overflow: hidden;
+    position: relative;
+  }
+  .hbar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .hbar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 0 3px 3px 0;
+  }
+  .hbar-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  /* Severity legend */
+  .sev-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .sev-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .sev-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* TLS donut alternative: segmented bar */
+  .seg-bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; gap: 2px; margin-bottom: 14px; }
+  .seg { display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.85); font-weight: 600; transition: flex 0.5s ease; min-width: 2px; }
+
+  .tls-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+  .tls-item { display: flex; align-items: center; gap: 8px; }
+  .tls-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .tls-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); }
+  .tls-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text); margin-left: 4px; }
+
+  /* Vuln table */
+  .vuln-grid { display: flex; flex-direction: column; gap: 8px; }
+  .vuln-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    gap: 12px;
+  }
+  .vuln-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .vuln-year {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .vuln-count-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+  }
+  .badge-crit { background: rgba(255,255,255,0.06); color: #FFFFFF; text-shadow: 0 0 12px rgba(255,255,255,0.8); }
+  .badge-high { background: rgba(255,255,255,0.04); color: #CCCCCC; }
+
+  /* ─── Notable findings ─── */
+  .finding-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 12px 0;
+  }
+  .finding-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .finding-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .finding-body {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── Disclaimer / Fine print ─── */
+  .disclaimer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--border);
+    border-radius: 0 0 10px 10px;
+    padding: 24px;
+    margin-top: 64px;
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+  .disclaimer h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .disclaimer p { color: var(--text-dim); font-size: 11px; margin-bottom: 8px; }
+  .disclaimer p:last-child { margin-bottom: 0; }
+
+  /* ─── Tags ─── */
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 32px 0;
+  }
+  .atag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    background: var(--tag-bg);
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── Series nav ─── */
+  .series-nav {
+    display: flex;
+    justify-content: flex-end;
+    padding: 24px 0 0;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+  }
+  .nav-next {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    text-decoration: none;
+  }
+  .nav-next .label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+  .nav-next .title { color: var(--text); }
+
+  @media (max-width: 560px) {
+    .hero-stat-bar { grid-template-columns: repeat(2, 1fr); }
+    .hbar-row { grid-template-columns: 80px 1fr 50px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-bar">
+  <a class="site-brand" href="/">SLEXPOSE</a>
+  <span class="site-series">Post 01 / 20: Attack Surface</span>
+</nav>
+
+<div class="article-wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="series-tag">Series 01 of 20 -- The Full Picture</div>
+    <h1 class="article-title">Sri Lanka Has <span class="accent">20,866</span> Internet-Facing<br>Hosts on the Public Index</h1>
+
+    <div class="article-meta">
+      <span class="meta-item">Aug 26, 2026</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">~8 min read</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">Source: Public OSINT</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">country:LK</span>
+    </div>
+
+    <p class="article-lede">
+      OSINT review of Sri Lanka's public internet index. 20,866 indexed results. No systems accessed. Here is what is visible in publicly accessible internet indexing data.
+    </p>
+
+    <div class="hero-stat-bar">
+      <div class="hstat">
+        <span class="hstat-num">20,866</span>
+        <span class="hstat-label">Internet-Facing<br>Hosts</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num warn">1,422</span>
+        <span class="hstat-label">Telnet<br>Servers</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num danger">1,869</span>
+        <span class="hstat-label">Self-Signed<br>Certs</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num crit">218</span>
+        <span class="hstat-label">SSLv3<br>(2015 Defunct)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <article class="prose">
+
+    <h2>The Numbers</h2>
+    <p>
+      A public internet index query for <code>country:LK</code> returned <strong>20,866 indexed results</strong> as of August 26, 2026. Each result represents a host on a Sri Lankan IP with at least one port observed open at the time of indexing. Servers, routers, cameras, databases.
+    </p>
+    <p>
+      This is post one of twenty. Each subsequent post covers a specific category: government systems, open databases, exposed cameras, hospitals, banks. This one covers the aggregate.
+    </p>
+
+    <!-- CHART: Port distribution -->
+    <div class="chart-block">
+      <div class="chart-title">Open Ports (Top 5)</div>
+      <div class="chart-sub">country:LK · 20,866 total indexed devices · August 2026</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">Port 80 (HTTP)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">9,134</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Port 443 (HTTPS)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:68%;background:#999999;"></div></div>
+          <span class="hbar-val">6,221</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Port 22 (SSH)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:28%;background:#666666;"></div></div>
+          <span class="hbar-val">2,551</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Port 23 (Telnet)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:15.5%;background:#FFFFFF;box-shadow:0 0 10px rgba(255,255,255,0.6);"></div></div>
+          <span class="hbar-val">1,422</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Port 8080 (Alt-HTTP)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:9.3%;background:#444444;"></div></div>
+          <span class="hbar-val">846</span>
+        </div>
+      </div>
+      <div class="sev-legend" style="margin-top:14px;">
+        <span class="sev-item"><span class="sev-dot" style="background:#FFFFFF;"></span> Plaintext HTTP (no encryption)</span>
+        <span class="sev-item"><span class="sev-dot" style="background:#999999;"></span> HTTPS</span>
+        <span class="sev-item"><span class="sev-dot" style="background:#666666;"></span> SSH</span>
+        <span class="sev-item"><span class="sev-dot" style="background:#FFFFFF;box-shadow:0 0 6px rgba(255,255,255,0.8);"></span> Telnet (plaintext, deprecated)</span>
+      </div>
+    </div>
+
+    <h2>Ports</h2>
+    <p>
+      Port 80 leads with <strong>9,134 hosts</strong> exposing an HTTP service. Port 443 (HTTPS) follows at 6,221. An open port 80 establishes that HTTP is accessible. It does not rule out encryption elsewhere on the host, but plaintext HTTP exposure at this scale warrants attention.
+    </p>
+    <p>
+      Port 23 is the one that stands out. <strong>Telnet on 1,422 hosts.</strong> Telnet was replaced by SSH in the 1990s. It transmits credentials and session data in plaintext, making any observer on the network path capable of capturing them. Exposed Telnet services are a well-documented target for automated scanning across the public internet.
+    </p>
+
+    <div class="callout danger-box">
+      <strong>Telnet</strong>
+      Credentials, commands, and data are transmitted as plaintext. An observer on the relevant network path may be able to capture transmitted credentials, commands, and data. 1,422 hosts. Fourth most common port in the country.
+    </div>
+
+    <h2>Geographic Spread</h2>
+
+    <!-- CHART: City distribution -->
+    <div class="chart-block">
+      <div class="chart-title">Device Distribution by City</div>
+      <div class="chart-sub">Top 5 cities · country:LK</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">Colombo</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">18,209</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Negombo</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:3.1%;background:#888888;"></div></div>
+          <span class="hbar-val">562</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Kandy</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:2.7%;background:#777777;"></div></div>
+          <span class="hbar-val">483</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Moratuwa</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:1.2%;background:#555555;"></div></div>
+          <span class="hbar-val">217</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Dehiwala-ML</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:0.9%;background:#444444;"></div></div>
+          <span class="hbar-val">162</span>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      <strong>Colombo accounts for 18,209 of 20,866 results, or 87%.</strong> The rest of the country is largely absent from the index. Colombo is where the data centers, ISP infrastructure, and government ministries are concentrated.
+    </p>
+
+    <!-- CHART: Top organizations -->
+    <div class="chart-block">
+      <div class="chart-title">Top Organizations by Device Count</div>
+      <div class="chart-sub">Who owns the most internet-facing hosts in Sri Lanka</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">ISP Sri Lanka*</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">7,762</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">MTT Network</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:28%;background:#888888;"></div></div>
+          <span class="hbar-val">2,203</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Dialog Telekom</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:24.6%;background:#777777;"></div></div>
+          <span class="hbar-val">1,911</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">LEARN (Edu)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:22.5%;background:#666666;"></div></div>
+          <span class="hbar-val">1,745</span>
+        </div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;">* "Internet Service Provider in Sri Lanka" appears as two variants in the public index, combined total shown</p>
+    </div>
+
+    <h2>What Is Running</h2>
+    <p>
+      Apache and nginx lead as expected. Third place is <strong>Hikvision IP cameras at 1,373 instances</strong>. Camera firmware is the third most common product on Sri Lanka's public internet. Hikvision devices have a well-documented history of critical CVEs and ship with default credentials that are widely published.
+    </p>
+
+    <!-- CHART: Products -->
+    <div class="chart-block">
+      <div class="chart-title">Top Products Running on Sri Lankan Hosts</div>
+      <div class="chart-sub">Identified from public index banners</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">Apache httpd</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#888888;"></div></div>
+          <span class="hbar-val">2,402</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">nginx</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:71%;background:#777777;"></div></div>
+          <span class="hbar-val">1,714</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Hikvision Cam</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:57%;background:#FFFFFF;box-shadow:0 0 10px rgba(255,255,255,0.6);"></div></div>
+          <span class="hbar-val">1,373</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">OpenSSH</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:52.6%;background:#666666;"></div></div>
+          <span class="hbar-val">1,263</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Remedy AR Srv</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:40.9%;background:#555555;"></div></div>
+          <span class="hbar-val">983</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>TLS Versions</h2>
+    <p>
+      TLSv1.2 and TLSv1.3 are current. Everything below is deprecated. SSLv3 was broken by the POODLE attack in 2014 and disabled by every major browser years ago.
+    </p>
+
+    <!-- TLS chart -->
+    <div class="chart-block">
+      <div class="chart-title">SSL/TLS Version Distribution</div>
+      <div class="chart-sub">Across all HTTPS-serving hosts in Sri Lanka</div>
+
+      <div class="seg-bar">
+        <div class="seg" style="flex:218;background:#FFFFFF;box-shadow:0 0 12px rgba(255,255,255,0.9);" title="SSLv3 · 218 hosts">SSLv3</div>
+        <div class="seg" style="flex:2004;background:#BBBBBB;" title="TLSv1 · 2,004 hosts">TLSv1</div>
+        <div class="seg" style="flex:2102;background:#888888;" title="TLSv1.1 · 2,102 hosts">v1.1</div>
+        <div class="seg" style="flex:4910;background:#444444;" title="TLSv1.2 · 4,910 hosts">TLSv1.2</div>
+        <div class="seg" style="flex:3051;background:#2A2A2A;" title="TLSv1.3 · 3,051 hosts">TLSv1.3</div>
+      </div>
+
+      <div class="tls-legend">
+        <div class="tls-item">
+          <div class="tls-dot" style="background:#FFFFFF;box-shadow:0 0 6px rgba(255,255,255,0.9);"></div>
+          <span class="tls-label">SSLv3, Broken (POODLE 2014)</span>
+          <span class="tls-count">218</span>
+        </div>
+        <div class="tls-item">
+          <div class="tls-dot" style="background:#BBBBBB;"></div>
+          <span class="tls-label">TLSv1, Deprecated 2018</span>
+          <span class="tls-count">2,004</span>
+        </div>
+        <div class="tls-item">
+          <div class="tls-dot" style="background:#888888;"></div>
+          <span class="tls-label">TLSv1.1, Deprecated 2018</span>
+          <span class="tls-count">2,102</span>
+        </div>
+        <div class="tls-item">
+          <div class="tls-dot" style="background:#444444;border:1px solid #666;"></div>
+          <span class="tls-label">TLSv1.2, Acceptable</span>
+          <span class="tls-count">4,910</span>
+        </div>
+        <div class="tls-item">
+          <div class="tls-dot" style="background:#2A2A2A;border:1px solid #555;"></div>
+          <span class="tls-label">TLSv1.3, Current Standard</span>
+          <span class="tls-count">3,051</span>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      <strong>4,324 hosts are running deprecated TLS.</strong> SSLv3 and TLSv1 are deprecated protocols with known cryptographic weaknesses. Browsers have disabled support for these versions by default. The servers are still advertising them anyway.
+    </p>
+
+    <h2>Auto-Tags</h2>
+    <p>
+      The public index auto-tags hosts based on observed behavior. Three tags define the picture.
+    </p>
+
+    <!-- Tags chart -->
+    <div class="chart-block">
+      <div class="chart-title">Auto-Tags Found on Sri Lankan Hosts</div>
+      <div class="chart-sub">Tags applied automatically based on observed behavior</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">self-signed</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">1,869</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">eol-product</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:74%;background:#CCCCCC;"></div></div>
+          <span class="hbar-val">1,384</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">eol-os</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:5.2%;background:#777777;"></div></div>
+          <span class="hbar-val">98</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">open-dir</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:2.1%;background:#555555;"></div></div>
+          <span class="hbar-val">40</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">database</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:1.6%;background:#444444;"></div></div>
+          <span class="hbar-val">30</span>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      <strong>Self-signed (1,869):</strong> No trusted certificate authority. Encryption may still be in use, but without third-party identity validation, browsers cannot verify who they are talking to and will warn users accordingly. The servers stay up.
+    </p>
+    <p>
+      <strong>End-of-life product (1,384):</strong> Software the vendor stopped patching. Any vulnerability found today may remain unpatched without vendor support. 1,384 hosts in this state, internet-facing.
+    </p>
+    <p>
+      <strong>Open directories (40):</strong> Directory listing enabled. Anyone can browse the server's file index in a browser. This may expose files such as backups, configuration files, or other unintended content.
+    </p>
+
+    <h2>CVE Associations from Banner Data</h2>
+    <p>
+      The public index cross-references host banners against known CVEs. These associations are based on version and banner matching only and indicate potential exposure, not confirmed exploitability.
+    </p>
+
+    <!-- Vuln table -->
+    <div class="chart-block">
+      <div class="chart-title">CVE Associations Identified from Banner/Version Data</div>
+      <div class="chart-sub">Version/banner matching only - exploitability not confirmed</div>
+      <div class="vuln-grid">
+        <div class="vuln-row">
+          <div>
+            <div class="vuln-name">HTTP.sys Denial of Service</div>
+            <div class="vuln-year">CVE-2015-1635 · Microsoft IIS · Remote crash with crafted request</div>
+          </div>
+          <span class="vuln-count-badge badge-high">11 hosts</span>
+        </div>
+        <div class="vuln-row">
+          <div>
+            <div class="vuln-name">HTTP.sys Remote Code Execution</div>
+            <div class="vuln-year">CVE-2021-31166 · Microsoft IIS · Unauthenticated RCE</div>
+          </div>
+          <span class="vuln-count-badge badge-crit">11 hosts</span>
+        </div>
+        <div class="vuln-row">
+          <div>
+            <div class="vuln-name">Heartbleed</div>
+            <div class="vuln-year">CVE-2014-0160 · OpenSSL · Memory disclosure, leaks private keys</div>
+          </div>
+          <span class="vuln-count-badge badge-crit">6 hosts</span>
+        </div>
+        <div class="vuln-row">
+          <div>
+            <div class="vuln-name">BlueKeep</div>
+            <div class="vuln-year">CVE-2019-0708 · Windows RDP · Wormable, unauthenticated RCE</div>
+          </div>
+          <span class="vuln-count-badge badge-crit">6 hosts</span>
+        </div>
+        <div class="vuln-row">
+          <div>
+            <div class="vuln-name">CVE-2022-32548</div>
+            <div class="vuln-year">DrayTek routers · Remote code execution without authentication</div>
+          </div>
+          <span class="vuln-count-badge badge-high">5 hosts</span>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      Heartbleed was disclosed in 2014. It can read 64KB of server memory per request, with the potential to expose sensitive memory contents including cryptographic material. Six Sri Lankan hosts have a banner/version match for this CVE. BlueKeep (2019) is a critical unauthenticated RDP vulnerability. Six hosts match. A CVE association from banner data does not establish that the vulnerable code path is present or that exploitation would succeed.
+    </p>
+
+    <div class="callout warn-box">
+      <strong>Methodology Note: CVE Associations</strong>
+      All CVE counts are matched from banner and version data only. No active probing was performed. A version match does not establish exploitability, affected configuration, or presence of the vulnerable code path on any specific host. These figures should be read as potential associations warranting investigation, not confirmed vulnerabilities.
+    </div>
+
+    <h2>Notable Findings</h2>
+    <p>Government and critical services visible in the indexed results:</p>
+
+    <div class="finding-card">
+      <div class="finding-label">Government: Cabinet Office</div>
+      <div class="finding-title">Office of the Cabinet of Ministers: Outdated TLS Configuration</div>
+      <div class="finding-body">The official web portal of Sri Lanka's Cabinet of Ministers appeared in the public index with a TLS configuration that does not meet current standards. Deprecated protocol versions were observed, and no TLSv1.3 support was indicated. For a government portal that citizens interact with, this warrants review by the responsible IT team.</div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-label">Government: Employees Provident Fund</div>
+      <div class="finding-title">EPF Portal: Deprecated TLS Support Observed</div>
+      <div class="finding-body">The Employees Provident Fund, which manages retirement savings for Sri Lankan workers, appeared in the public index with deprecated TLS protocol versions still enabled. TLSv1 and TLSv1.1 have been deprecated since 2018 and disabled by default in all major browsers since 2020. A financial data portal serving member accounts should be operating at current protocol standards.</div>
+    </div>
+
+    <h2>Summary</h2>
+    <p>
+      20,866 devices. Legacy protocols. End-of-life software. CVE associations involving vulnerabilities dating back to 2014. Surveillance cameras as the third most common product on the public internet. This is all OSINT, collected in an afternoon. If this is visible to a researcher, it is visible to threat actors. The difference is threat actors are not writing about it.
+    </p>
+    <p>
+      The next 19 posts go deeper into each category: government portals, open databases, cameras, banks, hospitals, universities. The editorial rule for the entire series is: public data only, patterns not targets. No IP addresses, no hostnames, no information that functions as a reconnaissance aid.
+    </p>
+
+    <!-- Article tags -->
+    <div class="article-tags">
+      <span class="atag">osint</span>
+      <span class="atag">sri-lanka</span>
+      <span class="atag">cybersecurity</span>
+      <span class="atag">attack-surface</span>
+      <span class="atag">tlsv1</span>
+      <span class="atag">infosec</span>
+      <span class="atag">public-data</span>
+    </div>
+
+    <!-- Series nav -->
+    <nav class="series-nav">
+      <a class="nav-next" href="/blog/post-02-government-https">
+        <span class="label">Next in Series →</span>
+        <span class="title">Post 02: Government Online and .gov.lk Without HTTPS</span>
+      </a>
+    </nav>
+
+  </article>
+
+  <!-- DISCLAIMER -->
+  <footer class="disclaimer">
+    <h4>Legal Disclaimer &amp; Methodology Notice</h4>
+    <p>
+      All data presented in this article was obtained exclusively through publicly accessible internet indexing data. No systems were accessed, probed, tested, logged into, or interacted with in any manner. No unauthorized access was performed. All findings reflect publicly observable information independently verifiable through any equivalent public data source.
+    </p>
+    <p>
+      Data is presented as-is from the public index and has not been independently verified against live systems. Index data represents a point-in-time snapshot and may not reflect the current state of any specific host. Device counts, vulnerability associations, and product identifications are automated detections by the indexing system and may contain false positives or inaccuracies. No specific IP addresses or identifiers that could enable targeted attacks are published in this article.
+    </p>
+    <p>
+      This content is published for public interest security research and journalistic purposes only. The intent is to raise awareness of systemic security issues affecting public and private internet infrastructure in Sri Lanka. Nothing in this article constitutes legal, technical, or security advice. Readers who identify security issues affecting their own systems are encouraged to contact CERT.LK at incidents@cert.gov.lk.
+    </p>
+    <p style="margin-top:12px;font-size:10px;color:var(--text-dim);">
+      Published Aug 26, 2026 · Source: Public OSINT (country:LK) · Data collected: Aug 26, 2026
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
