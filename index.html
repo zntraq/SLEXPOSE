@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SLEXPOSE – Coming Soon</title>
+    <title>SLEXPOSE – Security Research</title>
     <style>
         * {
             margin: 0;
@@ -27,7 +27,6 @@
             max-width: 600px;
         }
 
-        /* Glowing white title */
         h1 {
             font-size: 4rem;
             font-weight: 700;
@@ -41,7 +40,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Subtle glow on tagline */
         .tagline {
             font-size: 1.5rem;
             color: #cccccc;
@@ -50,7 +48,13 @@
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
-        /* Glowing badge - now a link */
+        .blog-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+
         .blog-badge {
             display: inline-block;
             border: 1px solid #ffffff;
@@ -59,8 +63,7 @@
             font-size: 1.2rem;
             font-weight: 600;
             color: #ffffff;
-            letter-spacing: 2px;
-            margin-bottom: 2rem;
+            letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
             box-shadow:
                 0 0 20px rgba(255, 255, 255, 0.1),
@@ -69,13 +72,11 @@
             text-decoration: none;
         }
 
-        /* Slight hover effect to make it interactive */
         .blog-badge:hover {
             box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
         }
 
-        /* Subtext - lighter gray for readability */
         .subtext {
             color: #aaaaaa;
             font-size: 0.9rem;
@@ -83,38 +84,50 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
         }
 
-        .subtext a {
-            color: #ffffff;
-            text-decoration: none;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        .subtext a:hover {
-            text-decoration: underline;
-        }
-
-        /* Footer - very subtle */
         .footer {
             margin-top: 3rem;
             color: #444444;
             font-size: 0.8rem;
             text-shadow: 0 0 5px rgba(255, 255, 255, 0.05);
         }
+
+        /* Version stamp - bottom right */
+        .version {
+            position: fixed;
+            bottom: 12px;
+            right: 16px;
+            font-family: 'IBM Plex Mono', 'Courier New', monospace;
+            font-size: 10px;
+            color: #333333;
+            letter-spacing: 0.06em;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Version Number – Increment this with each deploy -->
+    <div class="version">v1.0.0</div>
+
     <div class="container">
         <h1>SLEXPOSE</h1>
         <p class="tagline">Sri Lanka · Security · Exposed</p>
-        
-        <a href="/blog/post-01-sri-lanka-attack-surface/" class="blog-badge">
-            📄 READ BLOG 1 — SRI LANKA'S EXPOSED DEVICES
-        </a>
+
+        <div class="blog-list">
+            <a href="/blog/post-01-sri-lanka-attack-surface/" class="blog-badge">
+                Blog 01: Sri Lanka's Exposed Devices
+            </a>
+            <a href="/blog/post-02-government-https/" class="blog-badge">
+                Blog 02: Government HTTPS Exposure
+            </a>
+        </div>
+
         <p class="subtext">
             Investigating public data exposure in Sri Lanka.<br />
-            First post is now live. Read the full analysis above.
+            Read the full analysis above.
         </p>
         <div class="footer">ZNTRAQ &bull; 2026</div>
     </div>
+
 </body>
 </html>
