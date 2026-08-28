@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Government Online: .gov.lk and Legacy Web Security | SLEXPOSE</title>
+<meta name="description" content="30 .gov.lk hosts indexed on port 80. 121 indexed results associated with deprecated protocol support. Government portals are where citizen data moves. Here is what the public record shows.">
+<meta property="og:title" content="Government Online: .gov.lk and Legacy Web Security">
+<meta property="og:description" content="Public indexing data shows .gov.lk hosts serving HTTP and advertising deprecated TLS. No hacking. Just looking.">
+<meta property="og:type" content="article">
+<meta name="robots" content="index, follow">
+<meta name="author" content="ZNTRAQ">
+<link rel="canonical" href="https://slexpose.pages.dev/blog/post-02-government-https">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Government Online: .gov.lk and Legacy Web Security",
+  "description": "30 .gov.lk hosts indexed on port 80. 121 indexed services observed advertising deprecated TLS protocol support.",
+  "datePublished": "2026-08-26",
+  "dateModified": "2026-08-26",
+  "publisher": {
+    "@type": "Organization",
+    "name": "SLEXPOSE",
+    "url": "https://slexpose.pages.dev"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://slexpose.pages.dev/blog/post-02-government-https"
+  }
+}
+</script>
+
+<style>
+  :root {
+    --bg: #050505;
+    --surface: #0D0D0D;
+    --surface-2: #111111;
+    --border: #1C1C1C;
+    --border-sub: #111111;
+    --text: #FFFFFF;
+    --text-muted: #888888;
+    --text-dim: #3A3A3A;
+    --accent: #FFFFFF;
+    --accent-glow: rgba(255,255,255,0.05);
+    --accent-border: rgba(255,255,255,0.12);
+    --tag-bg: #0D0D0D;
+    --code-bg: #000000;
+    --good: #FFFFFF;
+    --warn: #AAAAAA;
+    --danger: #FFFFFF;
+    --crit: #FFFFFF;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #FFFFFF;
+      --surface: #F5F5F5;
+      --surface-2: #EEEEEE;
+      --border: #DDDDDD;
+      --border-sub: #E8E8E8;
+      --text: #000000;
+      --text-muted: #555555;
+      --text-dim: #AAAAAA;
+      --accent: #000000;
+      --accent-glow: rgba(0,0,0,0.04);
+      --accent-border: rgba(0,0,0,0.15);
+      --tag-bg: #F0F0F0;
+      --code-bg: #F8F8F8;
+      --good: #000000;
+      --warn: #555555;
+      --danger: #000000;
+      --crit: #000000;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #FFFFFF;
+    --surface: #F5F5F5;
+    --surface-2: #EEEEEE;
+    --border: #DDDDDD;
+    --border-sub: #E8E8E8;
+    --text: #000000;
+    --text-muted: #555555;
+    --text-dim: #AAAAAA;
+    --accent: #000000;
+    --accent-glow: rgba(0,0,0,0.04);
+    --accent-border: rgba(0,0,0,0.15);
+    --tag-bg: #F0F0F0;
+    --code-bg: #F8F8F8;
+    --good: #000000;
+    --warn: #555555;
+    --danger: #000000;
+    --crit: #000000;
+  }
+  :root[data-theme="dark"] {
+    --bg: #050505;
+    --surface: #0D0D0D;
+    --surface-2: #111111;
+    --border: #1C1C1C;
+    --border-sub: #111111;
+    --text: #FFFFFF;
+    --text-muted: #888888;
+    --text-dim: #3A3A3A;
+    --accent: #FFFFFF;
+    --accent-glow: rgba(255,255,255,0.05);
+    --accent-border: rgba(255,255,255,0.12);
+    --tag-bg: #0D0D0D;
+    --code-bg: #000000;
+    --good: #FFFFFF;
+    --warn: #AAAAAA;
+    --danger: #FFFFFF;
+    --crit: #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .site-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .site-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .site-series {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .article-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  .hero {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .series-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .series-tag::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .article-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(22px, 4.5vw, 38px);
+    font-weight: 600;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .article-title .accent { color: var(--accent); }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .meta-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .article-lede {
+    font-size: 17px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 680px;
+  }
+
+  .hero-stat-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 32px 0 0;
+  }
+  .hstat {
+    background: var(--surface);
+    padding: 20px 18px;
+    text-align: center;
+  }
+  .hstat-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(20px, 3.5vw, 30px);
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hstat-num.danger {
+    color: #FFFFFF;
+    text-shadow: 0 0 18px rgba(255,255,255,0.9), 0 0 40px rgba(255,255,255,0.5);
+  }
+  .hstat-num.warn {
+    color: #FFFFFF;
+    text-shadow: 0 0 14px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.3);
+  }
+  .hstat-num.crit {
+    color: #FFFFFF;
+    text-shadow: 0 0 22px rgba(255,255,255,1), 0 0 50px rgba(255,255,255,0.6);
+  }
+  .hstat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  .prose { max-width: 720px; }
+  .prose h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 48px 0 16px;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .prose h2::before {
+    content: '// ';
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .prose p {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.75;
+    font-size: 15.5px;
+  }
+  .prose p strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .prose a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-border);
+  }
+  .prose code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: var(--text);
+  }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 28px 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+  .callout.danger-box {
+    border-left-color: var(--danger);
+    background: rgba(239,68,68,0.04);
+  }
+  .callout.warn-box {
+    border-left-color: var(--warn);
+    background: rgba(245,158,11,0.04);
+  }
+  .callout strong {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .callout.warn-box strong { color: var(--text-muted); }
+
+  .chart-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 28px 0;
+    overflow-x: auto;
+  }
+  .chart-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .chart-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .hbar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .hbar-row { display: grid; grid-template-columns: 140px 1fr 64px; align-items: center; gap: 10px; }
+  .hbar-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .hbar-track {
+    background: var(--border-sub);
+    border-radius: 3px;
+    height: 22px;
+    overflow: hidden;
+    position: relative;
+  }
+  .hbar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .hbar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 0 3px 3px 0;
+  }
+  .hbar-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .sev-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .sev-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .sev-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .finding-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 12px 0;
+  }
+  .finding-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .finding-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .finding-body {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .stat-pair {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-pair-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-pair-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .disclaimer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--border);
+    border-radius: 0 0 10px 10px;
+    padding: 24px;
+    margin-top: 64px;
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+  .disclaimer h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .disclaimer p { color: var(--text-dim); font-size: 11px; margin-bottom: 8px; }
+  .disclaimer p:last-child { margin-bottom: 0; }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 32px 0;
+  }
+  .atag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    background: var(--tag-bg);
+    letter-spacing: 0.04em;
+  }
+
+  .series-nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 24px 0 0;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+  }
+  .nav-prev, .nav-next {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-decoration: none;
+  }
+  .nav-next { align-items: flex-end; }
+  .nav-prev .label, .nav-next .label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+  .nav-prev .title, .nav-next .title { color: var(--text); }
+
+  @media (max-width: 560px) {
+    .hero-stat-bar { grid-template-columns: repeat(2, 1fr); }
+    .hbar-row { grid-template-columns: 100px 1fr 50px; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-bar">
+  <a class="site-brand" href="/">SLEXPOSE</a>
+  <span class="site-series">Post 02 / 20: Government Web Security</span>
+</nav>
+
+<div class="article-wrap">
+
+  <header class="hero">
+    <div class="series-tag">Series 02 of 20 -- Government Online</div>
+    <h1 class="article-title"><span class="accent">.gov.lk</span> and Legacy Web Security</h1>
+
+    <div class="article-meta">
+      <span class="meta-item">Aug 26, 2026</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">~7 min read</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">Source: Public OSINT</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">hostname:.gov.lk</span>
+    </div>
+
+    <p class="article-lede">
+      Government portals are where citizens submit forms, log in, and interact with state services. When those portals expose port 80 without enforcing HTTPS redirects, data submitted over that connection travels without TLS encryption. Whether that applies to any specific host depends on its redirect and application configuration. Here is what the public index shows for .gov.lk.
+    </p>
+
+    <div class="hero-stat-bar">
+      <div class="hstat">
+        <span class="hstat-num warn">30</span>
+        <span class="hstat-label">.gov.lk Hosts<br>on Port 80</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num danger">121</span>
+        <span class="hstat-label">Indexed Deprecated<br>TLS Associations</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num crit">18</span>
+        <span class="hstat-label">Windows<br>Servers</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">5</span>
+        <span class="hstat-label">ISPs Hosting<br>Gov Infrastructure</span>
+      </div>
+    </div>
+  </header>
+
+  <article class="prose">
+
+    <h2>The Queries</h2>
+    <p>
+      Two queries were run against publicly accessible internet indexing data. The first, <code>hostname:.gov.lk port:80</code>, returned <strong>30 indexed results</strong>: .gov.lk hostnames with port 80 observable at the time of indexing. The second, <code>ssl.cert.subject.cn:*.gov.lk ssl.version:TLSv1,SSLv2,SSLv3</code>, returned <strong>121 indexed results</strong>: results associated with .gov.lk certificates where the observed service advertised deprecated protocol support.
+    </p>
+    <p>
+      These two queries measure different things. The first identifies hosts where HTTP is observable. The second identifies hosts where the TLS handshake advertises protocol versions that have been deprecated by standards bodies and disabled by default in major browsers. A host may appear in both.
+    </p>
+
+    <div class="callout warn-box">
+      <strong>Methodology Note</strong>
+      All results are from publicly accessible internet indexing data. Port observations and TLS version data reflect index snapshots and may not represent the current state of any specific host. TLS version data reflects what the server advertises as supported, not necessarily what it accepts or uses by default. No systems were accessed or probed.
+    </div>
+
+    <h2>Port 80: HTTP-Observable .gov.lk Hosts</h2>
+    <p>
+      <strong>30 .gov.lk hosts</strong> were indexed with port 80 observable. A service observed on port 80 is reachable over plaintext HTTP. Whether sensitive application traffic is actually exposed depends on redirect and application configuration; some hosts may redirect all traffic to HTTPS, others may not. The observation establishes that a plaintext HTTP service is present and indexed, not that HTTPS is absent.
+    </p>
+    <p>
+      Apache httpd leads by a wide margin, accounting for 18 of the 30 indexed results. Microsoft IIS httpd follows at 4.
+    </p>
+
+    <div class="chart-block">
+      <div class="chart-title">Products on Port 80 (.gov.lk)</div>
+      <div class="chart-sub">Identified from public index banners · 30 total results</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">Apache httpd</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">18</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Microsoft IIS httpd</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:22%;background:#888888;"></div></div>
+          <span class="hbar-val">4</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">nginx</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:17%;background:#666666;"></div></div>
+          <span class="hbar-val">3</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Lotus Domino</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:6%;background:#444444;"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">MS HTTPAPI httpd</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:6%;background:#333333;"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      Lotus Domino is worth noting. The public index identified one .gov.lk port 80 host as running it. Lotus Domino's vendor support status varies by version; the relevant question for the responsible administrator is whether the specific version in use is still receiving security updates.
+    </p>
+
+    <h2>Organizations Hosting Port 80 .gov.lk Infrastructure</h2>
+
+    <div class="chart-block">
+      <div class="chart-title">Top Organizations (.gov.lk, Port 80)</div>
+      <div class="chart-sub">By indexed result count</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">ISP Sri Lanka*</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">11</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">SL Telecom IDC</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:91%;background:#888888;"></div></div>
+          <span class="hbar-val">10</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Internet Data Center</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:36%;background:#666666;"></div></div>
+          <span class="hbar-val">4</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Lanka Gov Cloud</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:18%;background:#444444;"></div></div>
+          <span class="hbar-val">2</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">ICT Agency</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:9%;background:#333333;"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;">* "Internet Service Provider in Sri Lanka" appears as two variants in the index, combined total shown</p>
+    </div>
+
+    <p>
+      The organization field labeled as government cloud infrastructure appears in the port 80 results. Hosts on government-designated infrastructure appearing on port 80 warrants review by the responsible administrators.
+    </p>
+
+    <h2>Deprecated Protocol Support: 121 Indexed .gov.lk Services</h2>
+    <p>
+      The second query identified <strong>121 indexed results</strong> where an indexed TLS service associated with a .gov.lk certificate was observed advertising SSLv3, SSLv2, or TLSv1. These protocol versions were deprecated by the IETF and have been disabled by default in all major browsers. SSLv3 was broken by the POODLE vulnerability in 2014. TLSv1 and TLSv1.1 were formally deprecated in 2018. These results reflect what was observed in the index at the time of collection and may not represent the current state of any specific host.
+    </p>
+    <p>
+      A certificate advertising deprecated protocol support does not establish that those protocols are the default or that encryption is absent. It indicates deprecated protocol support was observed in the indexed data at the time of collection. For government-facing infrastructure, TLS 1.2 or newer should be supported with deprecated protocols disabled; TLS 1.3 should be enabled where compatible.
+    </p>
+
+    <div class="chart-block">
+      <div class="chart-title">Top Organizations (.gov.lk, Deprecated TLS)</div>
+      <div class="chart-sub">ssl.cert.subject.cn:*.gov.lk ssl.version:TLSv1,SSLv2,SSLv3 · 121 total results</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">Lanka Gov Cloud</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">30</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">SL Telecom IDC</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:80%;background:#999999;"></div></div>
+          <span class="hbar-val">24</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">ISP Sri Lanka*</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:60%;background:#777777;"></div></div>
+          <span class="hbar-val">18</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Dialog Telekom</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:57%;background:#555555;"></div></div>
+          <span class="hbar-val">17</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">ISP Sri Lanka (alt)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:37%;background:#444444;"></div></div>
+          <span class="hbar-val">11</span>
+        </div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;">* Two organization name variants combined</p>
+    </div>
+
+    <p>
+      The organization field labeled as government cloud infrastructure accounts for 30 of 121 results, the largest single organization. 24 more sit within Sri Lanka Telecom's Internet Data Center. The bulk of .gov.lk indexed deprecated TLS associations is concentrated in a small number of hosting providers.
+    </p>
+
+    <div class="chart-block">
+      <div class="chart-title">Top Products (.gov.lk, Deprecated TLS)</div>
+      <div class="chart-sub">Identified from public index banners</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">Apache httpd</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#888888;"></div></div>
+          <span class="hbar-val">45</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">nginx</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:49%;background:#777777;"></div></div>
+          <span class="hbar-val">22</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">MS HTTPAPI httpd</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:24%;background:#FFFFFF;box-shadow:0 0 6px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">11</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Microsoft IIS httpd</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:16%;background:#555555;"></div></div>
+          <span class="hbar-val">7</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">AWS ELB</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:2%;background:#333333;"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>End-of-Life Software in Government Infrastructure</h2>
+    <p>
+      The index auto-tags hosts based on observed behavior. Within the deprecated TLS results, a meaningful subset carried the <code>eol-product</code> tag, indicating software the vendor has stopped maintaining. The combination of deprecated TLS support and end-of-life software on the same host is the pattern of most concern: configuration weaknesses on a platform that will not receive security updates.
+    </p>
+    <p>
+      A recurring pattern in the data is government mail servers running Horde webmail. Horde components identified in the indexed data were associated with an end-of-life product classification by the index. Multiple .gov.lk mail servers running Horde appeared in the deprecated TLS results. The combination of an end-of-life product classification and observed deprecated TLS associations on mail infrastructure is a pattern worth flagging for administrators.
+    </p>
+
+    <h2>Notable Patterns</h2>
+    <p>Government and emergency service infrastructure observed in the indexed results:</p>
+
+    <div class="finding-card">
+      <div class="finding-label">Critical Public-Service Portal</div>
+      <div class="finding-title">Legacy TLS and EOL Software</div>
+      <div class="finding-body">A critical public-service portal appeared in the indexed results where an indexed TLS service associated with its certificate was observed advertising SSLv3 alongside newer protocol versions, and carrying an end-of-life product tag. Infrastructure of this type carrying these configuration patterns warrants priority review.</div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-label">Senior Public-Sector Portal</div>
+      <div class="finding-title">No TLSv1.3 Indicated</div>
+      <div class="finding-body">A senior public-sector portal appeared in the indexed results where an indexed TLS service associated with its certificate was observed advertising TLSv1, TLSv1.1, and TLSv1.2, with no TLSv1.3 support indicated. This is consistent with the wider pattern across the dataset: TLSv1.2 is present but TLSv1.3 adoption among .gov.lk hosts is limited. Portals handling government-to-citizen communications should be leading on current protocol support, not trailing.</div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-label">Pattern: Government Mail</div>
+      <div class="finding-title">Legacy Webmail on .gov.lk Mail Servers</div>
+      <div class="finding-body">Several .gov.lk mail servers running Horde webmail appeared in both the deprecated TLS and end-of-life product results. Horde components identified in the indexed data carried an end-of-life product classification. The combination of an end-of-life product classification and observed deprecated TLS support represents a larger potential attack surface than either condition alone.</div>
+    </div>
+
+    <h2>Summary</h2>
+    <p>
+      30 .gov.lk hosts indexed on port 80. 121 indexed services observed advertising deprecated TLS protocol support. The organization field labeled as government cloud infrastructure accounts for the largest share of the second result set. The dataset does not establish active exploitation. It establishes that the configuration patterns are present, indexed, and observable to anyone who looks.
+    </p>
+    <p>
+      Government portals are not ordinary websites. They handle citizen identity, financial transactions, and public records. The appropriate standard is current TLS across all public-facing services, with deprecated protocol support disabled and end-of-life software replaced. The editorial rule for this series applies here as everywhere: public data only, patterns not targets. No IP addresses, no hostnames, no information that functions as a reconnaissance aid.
+    </p>
+
+    <div class="article-tags">
+      <span class="atag">osint</span>
+      <span class="atag">sri-lanka</span>
+      <span class="atag">cybersecurity</span>
+      <span class="atag">gov-lk</span>
+      <span class="atag">https</span>
+      <span class="atag">tlsv1</span>
+      <span class="atag">infosec</span>
+      <span class="atag">public-data</span>
+    </div>
+
+    <nav class="series-nav">
+      <a class="nav-prev" href="/blog/post-01-sri-lanka-attack-surface">
+        <span class="label">← Previous in Series</span>
+        <span class="title">Post 01: Sri Lanka's Internet-Facing Attack Surface</span>
+      </a>
+      <a class="nav-next" href="/blog/post-03-open-databases">
+        <span class="label">Next in Series →</span>
+        <span class="title">Post 03: Open Databases</span>
+      </a>
+    </nav>
+
+  </article>
+
+  <footer class="disclaimer">
+    <h4>Legal Disclaimer and Methodology Notice</h4>
+    <p>
+      All data presented in this article was obtained exclusively through publicly accessible internet indexing data. No systems were accessed, probed, tested, logged into, or interacted with in any manner. No unauthorized access was performed. All findings reflect publicly observable information independently verifiable through any equivalent public data source.
+    </p>
+    <p>
+      Data is presented as-is from the public index and has not been independently verified against live systems. Index data represents a point-in-time snapshot and may not reflect the current state of any specific host. TLS version data reflects advertised protocol support and does not establish that deprecated versions are the default, that encryption is absent, or that any specific attack is feasible. Device counts and product identifications are automated detections and may contain false positives or inaccuracies. No specific IP addresses or identifiers that could enable targeted attacks are published in this article.
+    </p>
+    <p>
+      This content is published for public interest security research and journalistic purposes only. The intent is to raise awareness of systemic security patterns affecting public internet infrastructure in Sri Lanka. Nothing in this article constitutes legal, technical, or security advice. Administrators who identify security issues affecting their own systems are encouraged to contact CERT.LK at incidents@cert.gov.lk.
+    </p>
+    <p style="margin-top:12px;font-size:10px;color:var(--text-dim);">
+      Published Aug 26, 2026 · Source: Public OSINT · Data collected: Aug 26, 2026
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
