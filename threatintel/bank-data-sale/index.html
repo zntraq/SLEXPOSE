@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incident Report: Alleged Sale of DFCC Bank, Cargills Bank, and SL Customs Data | SLEXPOSE</title>
+<meta name="description" content="A threat actor publicly claimed access to customer data from DFCC Bank and Cargills Bank, and employee records from Sri Lanka Customs. After a 14-day deadline passed without response, the dataset was reportedly sold on August 5, 2026.">
+<meta property="og:title" content="Incident Report: Alleged Sale of DFCC Bank, Cargills Bank, and SL Customs Data">
+<meta property="og:description" content="Forum post, 14-day deadline, and a Russian-language sale confirmation. What is known, what is claimed, and what it means.">
+<meta property="og:type" content="article">
+<meta name="robots" content="index, follow">
+<meta name="author" content="ZNTRAQ">
+<link rel="canonical" href="https://slexpose.pages.dev/blog/incident-dfcc-cargills-customs-2026">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "Incident Report: Alleged Sale of DFCC Bank, Cargills Bank, and SL Customs Data",
+  "description": "A threat actor publicly claimed access to customer data from DFCC Bank and Cargills Bank and employee records from Sri Lanka Customs. The dataset was reportedly sold on August 5, 2026.",
+  "datePublished": "2026-08-26",
+  "dateModified": "2026-08-26",
+  "publisher": {
+    "@type": "Organization",
+    "name": "SLEXPOSE",
+    "url": "https://slexpose.pages.dev"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://slexpose.pages.dev/blog/incident-dfcc-cargills-customs-2026"
+  }
+}
+</script>
+
+<style>
+  :root {
+    --bg: #050505; --surface: #0D0D0D; --surface-2: #111111;
+    --border: #1C1C1C; --border-sub: #111111; --text: #FFFFFF;
+    --text-muted: #888888; --text-dim: #3A3A3A; --accent: #FFFFFF;
+    --accent-border: rgba(255,255,255,0.12);
+    --tag-bg: #0D0D0D; --code-bg: #000000;
+    --red: #FF4444; --red-dim: rgba(255,68,68,0.08);
+    --amber: #FFAA00; --amber-dim: rgba(255,170,0,0.08);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg:#FFFFFF; --surface:#F5F5F5; --surface-2:#EEEEEE;
+      --border:#DDDDDD; --border-sub:#E8E8E8; --text:#000000;
+      --text-muted:#555555; --text-dim:#AAAAAA; --accent:#000000;
+      --accent-border:rgba(0,0,0,0.15); --tag-bg:#F0F0F0; --code-bg:#F8F8F8;
+      --red:#CC0000; --red-dim:rgba(204,0,0,0.06);
+      --amber:#AA6600; --amber-dim:rgba(170,102,0,0.06);
+    }
+  }
+  :root[data-theme="light"]{--bg:#FFFFFF;--surface:#F5F5F5;--surface-2:#EEEEEE;--border:#DDDDDD;--border-sub:#E8E8E8;--text:#000000;--text-muted:#555555;--text-dim:#AAAAAA;--accent:#000000;--accent-border:rgba(0,0,0,0.15);--tag-bg:#F0F0F0;--code-bg:#F8F8F8;--red:#CC0000;--red-dim:rgba(204,0,0,0.06);--amber:#AA6600;--amber-dim:rgba(170,102,0,0.06);}
+  :root[data-theme="dark"]{--bg:#050505;--surface:#0D0D0D;--surface-2:#111111;--border:#1C1C1C;--border-sub:#111111;--text:#FFFFFF;--text-muted:#888888;--text-dim:#3A3A3A;--accent:#FFFFFF;--accent-border:rgba(255,255,255,0.12);--tag-bg:#0D0D0D;--code-bg:#000000;--red:#FF4444;--red-dim:rgba(255,68,68,0.08);--amber:#FFAA00;--amber-dim:rgba(255,170,0,0.08);}
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;}
+
+  .site-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .site-brand{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--accent);letter-spacing:0.08em;text-decoration:none;}
+  .site-series{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:0.1em;}
+
+  .incident-banner{background:var(--red-dim);border-bottom:2px solid var(--red);padding:12px 24px;text-align:center;}
+  .incident-banner span{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--red);}
+
+  .article-wrap{max-width:760px;margin:0 auto;padding:0 24px 80px;}
+  .hero{padding:48px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px;}
+
+  .incident-type{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:20px;background:var(--red-dim);border:1px solid rgba(255,68,68,0.2);border-radius:4px;padding:4px 10px;}
+
+  .article-title{font-family:'IBM Plex Mono',monospace;font-size:clamp(20px,4vw,34px);font-weight:600;line-height:1.2;letter-spacing:-0.02em;text-wrap:balance;margin-bottom:20px;color:var(--text);}
+
+  .article-meta{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:20px;}
+  .meta-item{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:0.06em;}
+  .meta-dot{width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;margin:0 4px;vertical-align:middle;}
+  .article-lede{font-size:16px;color:var(--text-muted);line-height:1.75;max-width:700px;border-left:3px solid var(--red);padding-left:18px;margin-top:24px;}
+
+  .status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:32px 0 0;}
+  .status-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;}
+  .status-card.red{border-color:rgba(255,68,68,0.3);background:var(--red-dim);}
+  .status-card.amber{border-color:rgba(255,170,0,0.3);background:var(--amber-dim);}
+  .status-val{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;display:block;margin-bottom:6px;}
+  .status-card.red .status-val{color:var(--red);}
+  .status-card.amber .status-val{color:var(--amber);}
+  .status-card .status-val{color:var(--text-muted);}
+  .status-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);line-height:1.4;}
+
+  .prose{max-width:720px;}
+  .prose h2{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;color:var(--text);margin:44px 0 14px;letter-spacing:-0.01em;}
+  .prose h2::before{content:'// ';color:var(--text-dim);font-size:14px;}
+  .prose p{color:var(--text-muted);margin-bottom:18px;line-height:1.75;font-size:15.5px;}
+  .prose p strong{color:var(--text);font-weight:600;}
+
+  .callout{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:18px 20px;margin:24px 0;font-size:14px;color:var(--text-muted);line-height:1.65;}
+  .callout.red-box{border-left-color:var(--red);background:var(--red-dim);}
+  .callout.amber-box{border-left-color:var(--amber);background:var(--amber-dim);}
+  .callout strong{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text);margin-bottom:8px;}
+  .callout.red-box strong{color:var(--red);}
+  .callout.amber-box strong{color:var(--amber);}
+
+  .timeline{margin:28px 0;display:flex;flex-direction:column;gap:0;}
+  .tl-item{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--border-sub);}
+  .tl-item:last-child{border-bottom:none;}
+  .tl-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);padding-top:2px;letter-spacing:0.04em;}
+  .tl-content{}
+  .tl-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;}
+  .tl-desc{font-size:13px;color:var(--text-muted);line-height:1.6;}
+  .tl-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:6px;}
+  .tl-badge.red{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
+  .tl-badge.amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,170,0,0.2);}
+  .tl-badge.dim{background:var(--surface);color:var(--text-dim);border:1px solid var(--border);}
+
+  .quote-block{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin:20px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);line-height:1.8;}
+  .quote-block .label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:10px;}
+  .quote-block .content{color:var(--text-muted);}
+  .quote-block .translation{font-size:11px;color:var(--text-dim);margin-top:10px;border-top:1px solid var(--border);padding-top:10px;font-family:'Inter',sans-serif;}
+
+  .target-list{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin:20px 0;}
+  .target-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-sub);}
+  .target-row:last-child{border-bottom:none;}
+  .target-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;}
+  .target-icon.bank{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
+  .target-icon.gov{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,170,0,0.2);}
+  .target-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;}
+  .target-claim{font-size:12px;color:var(--text-muted);}
+
+  .claim-vs-known{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0;}
+  .cvk-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;}
+  .cvk-card h4{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;}
+  .cvk-card.known h4{color:var(--text-muted);}
+  .cvk-card.claimed h4{color:var(--amber);}
+  .cvk-item{font-size:13px;color:var(--text-muted);padding:6px 0;border-bottom:1px solid var(--border-sub);line-height:1.5;}
+  .cvk-item:last-child{border-bottom:none;}
+
+  .article-tags{display:flex;flex-wrap:wrap;gap:8px;margin:32px 0;}
+  .atag{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;color:var(--text-dim);background:var(--tag-bg);letter-spacing:0.04em;}
+
+  .disclaimer{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--border);border-radius:0 0 10px 10px;padding:24px;margin-top:64px;font-size:11px;color:var(--text-dim);line-height:1.65;}
+  .disclaimer h4{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;}
+  .disclaimer p{color:var(--text-dim);font-size:11px;margin-bottom:8px;}
+  .disclaimer p:last-child{margin-bottom:0;}
+
+  @media(max-width:560px){
+    .status-grid{grid-template-columns:1fr 1fr;}
+    .claim-vs-known{grid-template-columns:1fr;}
+    .tl-item{grid-template-columns:1fr;}
+    .tl-date{padding-top:0;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-bar">
+  <a class="site-brand" href="/">SLEXPOSE</a>
+  <span class="site-series">Threat Intelligence</span>
+</nav>
+
+<div class="article-wrap">
+
+  <header class="hero">
+    <h1 class="article-title">Alleged Sale of DFCC Bank, Cargills Bank,<br>and Sri Lanka Customs Data</h1>
+
+    <div class="article-meta">
+      <span class="meta-item">Published Aug 26, 2026</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">Incident Date: Aug 5, 2026</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">Status: Sale Reported Complete</span>
+    </div>
+
+    <p class="article-lede">
+      A threat actor posted to a public forum claiming access to customer data from DFCC Bank and Cargills Bank, and employee records from Sri Lanka Customs. Bank account balances belonging to high-balance customers were released publicly as a freebie sample, without payment, at the time of the original post. A 14-day response deadline was then issued. When no response came, a Russian-language post confirmed the broader dataset was sold on August 5, 2026, including alleged credit card numbers, access to a command and control system, and exploits to bypass bank security controls.
+    </p>
+
+    <div class="status-grid">
+      <div class="status-card red">
+        <span class="status-val">SOLD</span>
+        <span class="status-label">Reported Transaction<br>Status</span>
+      </div>
+      <div class="status-card red">
+        <span class="status-val">CONFIRMED</span>
+        <span class="status-label">Balance Data<br>Publicly Released</span>
+      </div>
+      <div class="status-card amber">
+        <span class="status-val">UNVERIFIED</span>
+        <span class="status-label">Full Dataset<br>Authenticity</span>
+      </div>
+    </div>
+  </header>
+
+  <article class="prose">
+
+    <div class="callout red-box">
+      <strong>Important Caveat</strong>
+      The claims in this post originate from a threat actor on a forum. The authenticity of the alleged data, the scope of any intrusion, and the legitimacy of the sale have not been independently verified. This report documents what is publicly observable and stated by the threat actor. Readers and affected institutions should treat the claims seriously while recognizing they are unverified.
+    </div>
+
+    <h2>What Is Publicly Known</h2>
+    <p>
+      A post appeared on a public cybercrime forum claiming the poster had active access to systems belonging to DFCC Bank, Cargills Bank, and Sri Lanka Customs. The post was written in English and offered the dataset for sale through an escrow service, a mechanism used in criminal marketplaces to guarantee delivery of goods before payment is released.
+    </p>
+    <p>
+      The post included a freebie sample. Bank account balances belonging to high-balance customers were released publicly as part of this sample, without payment. This is the confirmed data disclosure: balance data was made available before any sale took place. The specific individuals affected are not identified in this report.
+    </p>
+    <p>
+      A 14-day deadline was issued to the named institutions. The post stated that if no interested parties responded, data samples would be published in stages and sent to bulk email lists of companies across Sri Lanka. The deadline passed without any publicly observable response from the named institutions.
+    </p>
+    <p>
+      On August 5, 2026, a follow-up post in Russian confirmed the transaction was complete. The sale was described as covering credit card numbers, access to a command and control (C&C) system, and exploits to bypass bank security controls. The post stated the project was closed.
+    </p>
+
+    <h2>Timeline</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <span class="tl-date">Before Aug 5</span>
+        <div class="tl-content">
+          <div class="tl-badge red">Data Disclosed</div>
+          <div class="tl-title">Bank Balance Data Released Publicly Without Payment</div>
+          <div class="tl-desc">Bank account balances of high-balance customers released as a freebie sample attached to the original forum post. This is the confirmed public disclosure: actual financial data made available before any sale, at no cost, to establish credibility.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-date">Before Aug 5</span>
+        <div class="tl-content">
+          <div class="tl-badge dim">Forum Post</div>
+          <div class="tl-title">Initial Claim Published</div>
+          <div class="tl-desc">Threat actor posts to public forum claiming access to DFCC Bank, Cargills Bank, and Sri Lanka Customs data. Dataset offered for sale via escrow. 14-day deadline issued to named institutions.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-date">14-Day Window</span>
+        <div class="tl-content">
+          <div class="tl-badge amber">No Response</div>
+          <div class="tl-title">Deadline Passes</div>
+          <div class="tl-desc">No publicly observable response from DFCC Bank, Cargills Bank, or Sri Lanka Customs. No public acknowledgment of the threat or any reported breach from the named institutions during this period.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-date">Aug 5, 2026</span>
+        <div class="tl-content">
+          <div class="tl-badge red">Sale Confirmed</div>
+          <div class="tl-title">Sale Reported Complete</div>
+          <div class="tl-desc">Russian-language post confirms transaction finalized via escrow service. Alleged contents transferred: credit card numbers, C&C system access, exploits to bypass security controls. Poster states project is closed.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-date">Aug 26, 2026</span>
+        <div class="tl-content">
+          <div class="tl-badge dim">This Report</div>
+          <div class="tl-title">SLEXPOSE Incident Report Published</div>
+          <div class="tl-desc">This report published based on publicly observable forum posts and sale confirmation. No response or statement from named institutions at time of publication.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Named Targets</h2>
+    <div class="target-list">
+      <div class="target-row">
+        <div class="target-icon bank">$</div>
+        <div>
+          <div class="target-name">DFCC Bank</div>
+          <div class="target-claim">Claimed: Complete copy of customer data</div>
+        </div>
+      </div>
+      <div class="target-row">
+        <div class="target-icon bank">$</div>
+        <div>
+          <div class="target-name">Cargills Bank</div>
+          <div class="target-claim">Claimed: Complete copy of customer data</div>
+        </div>
+      </div>
+      <div class="target-row">
+        <div class="target-icon gov">G</div>
+        <div>
+          <div class="target-name">Sri Lanka Customs Department</div>
+          <div class="target-claim">Claimed: Government majority employee factsheet (described as a freebie in the post)</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>What the Sale Confirmation States</h2>
+    <p>
+      The sale confirmation was posted in Russian. Below is the translated content as published, reproduced for documentation purposes.
+    </p>
+
+    <div class="quote-block">
+      <span class="label">Sale Confirmation (translated from Russian, Aug 5, 2026)</span>
+      <div class="content">"Please do not contact regarding samples. The final sample is shown below. It is hidden (cannot be shown per agreement). The agreement for the sale of the banking data set through an escrow service, concluded yesterday, has been finalized. Credit card numbers, access to the C&C system, and exploits to bypass protection: all transferred. Project closed."</div>
+    </div>
+
+    <p>
+      The use of Russian in the confirmation post is consistent with the actor's apparent origin or operating language. The reference to a C&C (command and control) system is significant: C&C systems are used to maintain persistent access to compromised infrastructure. If the claim is accurate, the buyer received not just data but active tools to continue operating within the affected systems.
+    </p>
+
+    <h2>What Is Known vs What Is Claimed</h2>
+
+    <div class="claim-vs-known">
+      <div class="cvk-card known">
+        <h4>Independently Observable</h4>
+        <div class="cvk-item">Forum post exists and is publicly visible</div>
+        <div class="cvk-item">Sale confirmation post exists and is publicly visible</div>
+        <div class="cvk-item">Three institutions named in the public post</div>
+        <div class="cvk-item">14-day deadline issued and passed</div>
+        <div class="cvk-item"><strong style="color:var(--text);">Bank account balances of high-balance customers were released publicly as a freebie, without payment</strong></div>
+        <div class="cvk-item">Transaction reported as completed via escrow on Aug 5</div>
+        <div class="cvk-item">No public statement from named institutions at time of publication</div>
+      </div>
+      <div class="cvk-card claimed">
+        <h4>Threat Actor Claims (Unverified)</h4>
+        <div class="cvk-item">Customer data is genuine and complete</div>
+        <div class="cvk-item">Active access to bank systems via C&C</div>
+        <div class="cvk-item">Exploits capable of bypassing bank security controls</div>
+        <div class="cvk-item">Credit card numbers included in dataset</div>
+        <div class="cvk-item">Customs employee records included</div>
+        <div class="cvk-item">All material successfully transferred to buyer</div>
+      </div>
+    </div>
+
+    <h2>Why C&C Access Claims Are Significant</h2>
+    <p>
+      Standard data breach incidents typically involve exfiltration of historical data: records pulled from a database and sold. The C&C access claim, if accurate, describes something different: the sale of ongoing access to the compromised infrastructure. A buyer receiving C&C access would retain the ability to issue commands, exfiltrate additional data, or move laterally within the network.
+    </p>
+    <p>
+      This distinction matters for incident response. If the claim is accurate, closing the transaction does not end the incident. The buyer now holds access tools. The appropriate response from any affected institution is to assume the network is still compromised until a full forensic investigation establishes otherwise.
+    </p>
+
+    <div class="callout amber-box">
+      <strong>Note on Data Authenticity</strong>
+      Threat actors on criminal forums routinely exaggerate the scope and authenticity of data they sell. Freebie samples are sometimes fabricated or sourced from previous unrelated breaches. This report does not confirm the data is genuine. It documents that the claims are public, the sale was reported as complete, and the named institutions have not publicly responded. Authenticity can only be determined by the affected institutions through internal investigation.
+    </div>
+
+    <h2>What Affected Institutions Should Do</h2>
+    <p>
+      Based on the publicly stated claims, affected institutions should treat this as a credible threat requiring immediate investigation, without waiting for independent confirmation of the data's authenticity.
+    </p>
+    <p>
+      For <strong>DFCC Bank and Cargills Bank</strong>: engage an incident response team to investigate potential unauthorized access to customer data systems. Audit authentication logs for anomalous access. Review network traffic for C&C communication indicators. Notify the Central Bank of Sri Lanka and CERT.LK. Consider whether customer notification obligations apply under applicable law.
+    </p>
+    <p>
+      For <strong>Sri Lanka Customs</strong>: investigate whether employee records were accessed. Review access logs for HR or personnel systems. Notify CERT.LK and the relevant government cybersecurity authority.
+    </p>
+    <p>
+      For <strong>affected customers and employees</strong>: if you hold accounts at DFCC Bank or Cargills Bank, monitor for unauthorized transactions and consider placing fraud alerts. If you are a Sri Lanka Customs employee, be alert to phishing attempts using your work information.
+    </p>
+
+    <h2>Contact for Affected Institutions</h2>
+    <p>
+      CERT.LK (Sri Lanka Computer Emergency Readiness Team) can be reached at <strong>incidents@cert.gov.lk</strong> for incident reporting and coordination assistance.
+    </p>
+    <p>
+      The Central Bank of Sri Lanka's Financial Intelligence Unit can be reached through the CBSL website for financial crime reporting.
+    </p>
+
+    <div class="callout">
+      <strong>Editorial Note</strong>
+      This report does not publish the threat actor's contact handles, data samples, or any information that would facilitate further harm. The forum post and sale confirmation are public records documented here for journalistic and public interest purposes. SLEXPOSE does not endorse, facilitate, or profit from cybercriminal activity.
+    </div>
+
+    <div class="article-tags">
+      <span class="atag">incident-report</span>
+      <span class="atag">sri-lanka</span>
+      <span class="atag">data-breach</span>
+      <span class="atag">banking</span>
+      <span class="atag">threat-intelligence</span>
+      <span class="atag">dfcc-bank</span>
+      <span class="atag">cargills-bank</span>
+      <span class="atag">customs</span>
+    </div>
+
+  </article>
+
+  <footer class="disclaimer">
+    <h4>Disclaimer</h4>
+    <p>
+      This report documents publicly observable threat actor activity. All claims attributed to the threat actor are reproduced for journalistic documentation purposes and are explicitly noted as unverified. SLEXPOSE has not accessed, purchased, viewed, or interacted with any data alleged to have been stolen. No credentials, financial information, or personal data belonging to any individual or institution has been obtained or retained.
+    </p>
+    <p>
+      The threat actor's contact information and data samples are intentionally excluded from this report to avoid facilitating further harm. Institutions named in this report are named because they were named in a public forum post, not as a result of any independent finding by this publication.
+    </p>
+    <p>
+      Nothing in this report constitutes legal or security advice. Affected institutions should engage qualified incident response professionals and report to the relevant authorities.
+    </p>
+    <p style="margin-top:12px;font-size:10px;color:var(--text-dim);">
+      Published Sep 01, 2026 · SLEXPOSE Incident Report · Source: Public forum posts and sale confirmation (documented, not linked)
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
