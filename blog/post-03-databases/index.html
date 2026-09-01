@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database Services on Sri Lanka's Public Internet Index | SLEXPOSE</title>
+<meta name="description" content="410 database service ports indexed on Sri Lankan IPs. MongoDB, MySQL, PostgreSQL, Redis. Version banners, authentication notes, and EOL software visible in the public index.">
+<meta property="og:title" content="Database Services on Sri Lanka's Public Internet Index">
+<meta property="og:description" content="410 indexed database service ports. Five MongoDB instances noting partial authentication. One Redis instance tagged compromised. No hacking. Just looking.">
+<meta property="og:type" content="article">
+<meta name="robots" content="index, follow">
+<meta name="author" content="ZNTRAQ">
+<link rel="canonical" href="https://slexpose.pages.dev/blog/post-03-databases">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Database Services on Sri Lanka's Public Internet Index",
+  "description": "410 database service ports indexed on Sri Lankan IPs. Version banners, authentication notes, and EOL software visible in public indexing data.",
+  "datePublished": "2026-08-26",
+  "dateModified": "2026-08-26",
+  "publisher": {
+    "@type": "Organization",
+    "name": "SLEXPOSE",
+    "url": "https://slexpose.pages.dev"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://slexpose.pages.dev/blog/post-03-databases"
+  }
+}
+</script>
+
+<style>
+  :root {
+    --bg: #050505;
+    --surface: #0D0D0D;
+    --surface-2: #111111;
+    --border: #1C1C1C;
+    --border-sub: #111111;
+    --text: #FFFFFF;
+    --text-muted: #888888;
+    --text-dim: #3A3A3A;
+    --accent: #FFFFFF;
+    --accent-glow: rgba(255,255,255,0.05);
+    --accent-border: rgba(255,255,255,0.12);
+    --tag-bg: #0D0D0D;
+    --code-bg: #000000;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #FFFFFF; --surface: #F5F5F5; --surface-2: #EEEEEE;
+      --border: #DDDDDD; --border-sub: #E8E8E8; --text: #000000;
+      --text-muted: #555555; --text-dim: #AAAAAA; --accent: #000000;
+      --accent-glow: rgba(0,0,0,0.04); --accent-border: rgba(0,0,0,0.15);
+      --tag-bg: #F0F0F0; --code-bg: #F8F8F8;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #FFFFFF; --surface: #F5F5F5; --surface-2: #EEEEEE;
+    --border: #DDDDDD; --border-sub: #E8E8E8; --text: #000000;
+    --text-muted: #555555; --text-dim: #AAAAAA; --accent: #000000;
+    --accent-glow: rgba(0,0,0,0.04); --accent-border: rgba(0,0,0,0.15);
+    --tag-bg: #F0F0F0; --code-bg: #F8F8F8;
+  }
+  :root[data-theme="dark"] {
+    --bg: #050505; --surface: #0D0D0D; --surface-2: #111111;
+    --border: #1C1C1C; --border-sub: #111111; --text: #FFFFFF;
+    --text-muted: #888888; --text-dim: #3A3A3A; --accent: #FFFFFF;
+    --accent-glow: rgba(255,255,255,0.05); --accent-border: rgba(255,255,255,0.12);
+    --tag-bg: #0D0D0D; --code-bg: #000000;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px; line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .site-bar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 24px; height: 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .site-brand {
+    font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600;
+    color: var(--accent); letter-spacing: 0.08em; text-decoration: none;
+  }
+  .site-series {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--text-dim); letter-spacing: 0.1em;
+  }
+
+  .article-wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
+
+  .hero { padding: 56px 0 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+
+  .series-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 20px;
+  }
+  .series-tag::before {
+    content: ''; display: block; width: 20px; height: 1px;
+    background: var(--text-dim); flex-shrink: 0;
+  }
+
+  .article-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(22px, 4.5vw, 38px); font-weight: 600;
+    line-height: 1.18; letter-spacing: -0.02em;
+    text-wrap: balance; margin-bottom: 20px; color: var(--text);
+  }
+  .article-title .accent { color: var(--accent); }
+
+  .article-meta {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    align-items: center; margin-bottom: 24px;
+  }
+  .meta-item {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--text-dim); letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+
+  .article-lede { font-size: 17px; color: var(--text-muted); line-height: 1.7; max-width: 680px; }
+
+  .hero-stat-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 10px;
+    overflow: hidden; margin: 32px 0 0;
+  }
+  .hstat { background: var(--surface); padding: 20px 18px; text-align: center; }
+  .hstat-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(20px, 3.5vw, 30px); font-weight: 600; color: var(--text);
+    font-variant-numeric: tabular-nums; display: block;
+    line-height: 1; margin-bottom: 6px;
+  }
+  .hstat-num.danger {
+    color: #FFFFFF;
+    text-shadow: 0 0 18px rgba(255,255,255,0.9), 0 0 40px rgba(255,255,255,0.5);
+  }
+  .hstat-num.warn {
+    color: #FFFFFF;
+    text-shadow: 0 0 14px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.3);
+  }
+  .hstat-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-dim); line-height: 1.4;
+  }
+
+  .prose { max-width: 720px; }
+  .prose h2 {
+    font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600;
+    color: var(--text); margin: 48px 0 16px;
+    letter-spacing: -0.01em; text-wrap: balance;
+  }
+  .prose h2::before { content: '// '; color: var(--accent); font-size: 14px; }
+  .prose p { color: var(--text-muted); margin-bottom: 20px; line-height: 1.75; font-size: 15.5px; }
+  .prose p strong { color: var(--text); font-weight: 600; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-border); }
+  .prose code {
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 4px; padding: 2px 6px; color: var(--text);
+  }
+
+  .callout {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); border-radius: 8px;
+    padding: 18px 20px; margin: 28px 0; font-size: 14px;
+    color: var(--text-muted); line-height: 1.65;
+  }
+  .callout.warn-box { border-left-color: #888888; background: rgba(245,158,11,0.04); }
+  .callout strong {
+    display: block; font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text); margin-bottom: 8px;
+  }
+  .callout.warn-box strong { color: var(--text-muted); }
+
+  .chart-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; margin: 28px 0; overflow-x: auto;
+  }
+  .chart-title {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;
+    color: var(--text); letter-spacing: 0.06em; margin-bottom: 4px; text-transform: uppercase;
+  }
+  .chart-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
+
+  .hbar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .hbar-row { display: grid; grid-template-columns: 130px 1fr 64px; align-items: center; gap: 10px; }
+  .hbar-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--text-muted); text-align: right; white-space: nowrap;
+  }
+  .hbar-track {
+    background: var(--border-sub); border-radius: 3px;
+    height: 22px; overflow: hidden; position: relative;
+  }
+  .hbar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1); position: relative;
+  }
+  .hbar-fill::after {
+    content: ''; position: absolute; right: 0; top: 0; bottom: 0;
+    width: 2px; background: rgba(255,255,255,0.15); border-radius: 0 3px 3px 0;
+  }
+  .hbar-val {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    color: var(--text); font-variant-numeric: tabular-nums; text-align: right;
+  }
+
+  .db-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 28px 0;
+  }
+  .db-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .db-card-port {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 6px;
+  }
+  .db-card-name { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .db-card-count {
+    font-family: 'IBM Plex Mono', monospace; font-size: 28px;
+    font-weight: 600; color: var(--text); display: block; margin-bottom: 8px;
+  }
+  .db-card-note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  .banner-block {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 18px; margin: 16px 0;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    color: var(--text-muted); line-height: 1.7; overflow-x: auto;
+  }
+  .banner-block .key { color: var(--text-dim); }
+  .banner-block .val { color: var(--text); }
+  .banner-block .highlight { color: #FFFFFF; font-weight: 600; }
+
+  .tag-pill {
+    display: inline-block; font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; padding: 2px 8px;
+    border: 1px solid var(--border); border-radius: 4px;
+    color: var(--text-dim); background: var(--tag-bg);
+    margin-right: 4px; letter-spacing: 0.04em;
+  }
+  .tag-pill.danger { border-color: rgba(255,255,255,0.3); color: var(--text); }
+
+  .finding-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px; margin: 12px 0;
+  }
+  .finding-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 8px;
+  }
+  .finding-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .finding-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  .article-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 32px 0; }
+  .atag {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px;
+    color: var(--text-dim); background: var(--tag-bg); letter-spacing: 0.04em;
+  }
+
+  .series-nav {
+    display: flex; justify-content: space-between;
+    padding: 24px 0 0; border-top: 1px solid var(--border); margin-top: 48px;
+  }
+  .nav-prev, .nav-next {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    color: var(--text-muted); display: flex; flex-direction: column;
+    gap: 4px; text-decoration: none;
+  }
+  .nav-next { align-items: flex-end; }
+  .nav-prev .label, .nav-next .label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+  .nav-prev .title, .nav-next .title { color: var(--text); }
+
+  .disclaimer {
+    background: var(--surface); border: 1px solid var(--border);
+    border-top: 3px solid var(--border); border-radius: 0 0 10px 10px;
+    padding: 24px; margin-top: 64px; font-size: 11px;
+    color: var(--text-dim); line-height: 1.65;
+  }
+  .disclaimer h4 {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 10px;
+  }
+  .disclaimer p { color: var(--text-dim); font-size: 11px; margin-bottom: 8px; }
+  .disclaimer p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 560px) {
+    .hero-stat-bar { grid-template-columns: repeat(2, 1fr); }
+    .db-grid { grid-template-columns: 1fr; }
+    .hbar-row { grid-template-columns: 90px 1fr 50px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-bar">
+  <a class="site-brand" href="/">SLEXPOSE</a>
+  <span class="site-series">Post 03 / 20: Databases</span>
+</nav>
+
+<div class="article-wrap">
+
+  <header class="hero">
+    <div class="series-tag">Series 03 of 20 -- Databases</div>
+    <h1 class="article-title"><span class="accent">410</span> Database Service Ports<br>Indexed on Sri Lankan IPs</h1>
+
+    <div class="article-meta">
+      <span class="meta-item">Aug 26, 2026</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">~8 min read</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">Source: Public OSINT</span>
+      <span class="meta-dot"></span>
+      <span class="meta-item">MongoDB · MySQL · PostgreSQL · Redis</span>
+    </div>
+
+    <p class="article-lede">
+      Database services are not web pages. They are not intended to be publicly reachable. When they appear in a public internet index, it is worth asking why. This post looks at what the index shows for common database ports on Sri Lankan IPs: version banners, authentication status notes, EOL software tags, and one instance the index has tagged as compromised.
+    </p>
+
+    <div class="hero-stat-bar">
+      <div class="hstat">
+        <span class="hstat-num danger">358</span>
+        <span class="hstat-label">MySQL<br>Indexed</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num warn">38</span>
+        <span class="hstat-label">PostgreSQL<br>Indexed</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num warn">9</span>
+        <span class="hstat-label">Redis<br>Indexed</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">5</span>
+        <span class="hstat-label">MongoDB<br>Indexed</span>
+      </div>
+    </div>
+  </header>
+
+  <article class="prose">
+
+    <h2>What the Index Observes</h2>
+    <p>
+      Public internet indexing services probe publicly reachable ports and record the responses. For database services, this means the index captures whatever the server returns on connection: a version banner, an authentication challenge, an error message, or in some cases full server metadata. None of the data below was obtained by logging in, querying, or interacting further with any system. It reflects what the server responded with on initial contact.
+    </p>
+    <p>
+      Five queries were run: <code>country:LK port:27017 product:MongoDB</code>, <code>country:LK port:3306 product:MySQL</code>, <code>country:LK port:5432 product:PostgreSQL</code>, <code>country:LK port:6379 product:Redis</code>, and <code>country:LK port:9200 product:Elasticsearch</code>. Elasticsearch and Microsoft SQL Server (port 1433) returned zero indexed results for Sri Lankan IPs.
+    </p>
+
+    <div class="callout warn-box">
+      <strong>Methodology Note</strong>
+      Version banners are standard behavior for several database products and do not indicate unauthenticated access. Authentication status notes in this post are quoted directly from banner content as observed in the public index. No connection was attempted, no data was queried, and no systems were accessed. EOL status is based on vendor published support timelines.
+    </div>
+
+    <h2>MongoDB: 5 Indexed Instances</h2>
+    <p>
+      Five MongoDB instances on Sri Lankan IPs were indexed on port 27017. All five banners include the field <code>"Authentication partially enabled"</code> in their server information response. This is MongoDB's own description of its authentication state, returned as part of the initial connection response.
+    </p>
+    <p>
+      Two of the five instances carry the index's <code>eol-product</code> tag. MongoDB 4.0 reached end-of-life in February 2022. MongoDB 5.0 reached end-of-life in October 2024. One instance on a version within those ranges also carries the <code>compromised</code> tag, applied by the index based on observed indicators.
+    </p>
+
+    <div class="banner-block">
+      <span class="key">MongoDB Server Information</span><br>
+      <span class="highlight">Authentication partially enabled</span><br>
+      <span class="key">"storageEngines"</span><span class="val">: [ "devnull", "wiredTiger" ]</span><br>
+      <span class="key">"buildEnvironment"</span><span class="val">: { "distarch": "x86_64", ... }</span>
+    </div>
+
+    <p>
+      The banner content does not establish whether the partial authentication state permits unauthenticated read or write operations. It establishes that the phrase appears in the server's own response and that the administrator of each instance should verify their authentication configuration is complete.
+    </p>
+
+    <div class="chart-block">
+      <div class="chart-title">MongoDB: Indexed Instances by Version</div>
+      <div class="chart-sub">country:LK port:27017 product:MongoDB · 5 total results</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">4.0.28 (EOL)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.5);"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">5.0.23 (EOL)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.5);"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">7.0.12</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#555555;"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">7.0.17</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#555555;"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">7.0.24</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#555555;"></div></div>
+          <span class="hbar-val">1</span>
+        </div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;">EOL per MongoDB official lifecycle documentation. MongoDB 4.0: EOL Feb 2022. MongoDB 5.0: EOL Oct 2024.</p>
+    </div>
+
+    <h2>Redis: 9 Indexed Instances</h2>
+    <p>
+      Nine Redis instances were indexed on port 6379. Redis returns different responses depending on whether authentication is required. The majority of the nine indexed instances returned <code>-NOAUTH Authentication required.</code>, indicating authentication is configured and the index's connection attempt was rejected.
+    </p>
+    <p>
+      However, at least one indexed instance returned a full server INFO block in response to the initial connection without an authentication challenge. This is the behavior of a Redis instance without a password set, or with an empty password. The index recorded version, memory usage, uptime, and connected client counts from this response. A second instance carries the index's <code>compromised</code> tag alongside a full INFO response.
+    </p>
+
+    <div class="banner-block">
+      <span class="key"># Server</span><br>
+      <span class="highlight">redis_version:2.8.4</span><br>
+      <span class="key">redis_git_sha1</span><span class="val">:00000000</span><br>
+      <span class="key">redis_git_dirty</span><span class="val">:0</span><br>
+      <span class="key">arch_bits</span><span class="val">:64</span><br>
+      <span class="key">uptime_in_seconds</span><span class="val">:75260</span><br>
+      <span class="key">connected_clients</span><span class="val">:1</span><br>
+      <span class="key">used_memory_human</span><span class="val">:54.15M</span>
+    </div>
+
+    <p>
+      Redis 2.8 reached end-of-life in 2015. An indexed Redis instance on a version from 2013, returning server metadata without an authentication challenge, represents a meaningful configuration concern. The content of the memory is not established by this data.
+    </p>
+
+    <div class="chart-block">
+      <div class="chart-title">Redis: Authentication Response Observed</div>
+      <div class="chart-sub">country:LK port:6379 product:Redis · 9 total results</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">-NOAUTH (auth set)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#555555;"></div></div>
+          <span class="hbar-val">7</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Full INFO (no challenge)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:29%;background:#FFFFFF;box-shadow:0 0 8px rgba(255,255,255,0.5);"></div></div>
+          <span class="hbar-val">2</span>
+        </div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;">1 of the 2 "full INFO" instances carries the index's "compromised" tag. Authentication state inferred from initial connection response only.</p>
+    </div>
+
+    <h2>MySQL: 358 Indexed Instances</h2>
+    <p>
+      MySQL is by far the most indexed database product on Sri Lankan IPs, with <strong>358 results</strong> on port 3306. This count alone does not indicate a security issue. MySQL, like most relational databases, announces its version as part of the initial handshake before any authentication exchange. A version banner in the index does not establish that the instance accepts unauthenticated connections.
+    </p>
+    <p>
+      What the index does reveal is version distribution. Several of the indexed instances are running versions that have passed end-of-life. MySQL 5.5 reached end-of-life in December 2018. MySQL 5.6 reached end-of-life in February 2021. Both appear in the indexed version distribution.
+    </p>
+
+    <div class="chart-block">
+      <div class="chart-title">MySQL: Top Indexed Versions</div>
+      <div class="chart-sub">country:LK port:3306 product:MySQL · 358 total results</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">5.7.33 Ubuntu (EOL)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#888888;"></div></div>
+          <span class="hbar-val">43</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">5.5.41 (EOL)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:56%;background:#FFFFFF;box-shadow:0 0 6px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">24</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">5.7.31 Ubuntu (EOL)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:42%;background:#777777;"></div></div>
+          <span class="hbar-val">18</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">8.0.46 Ubuntu</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:23%;background:#555555;"></div></div>
+          <span class="hbar-val">10</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">5.6.10 (EOL)</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:21%;background:#FFFFFF;box-shadow:0 0 6px rgba(255,255,255,0.4);"></div></div>
+          <span class="hbar-val">9</span>
+        </div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;">MySQL 5.5 EOL: Dec 2018. MySQL 5.6 EOL: Feb 2021. MySQL 5.7 EOL: Oct 2023. EOL per MySQL official lifecycle.</p>
+    </div>
+
+    <div class="chart-block">
+      <div class="chart-title">MySQL: Top Organizations</div>
+      <div class="chart-sub">country:LK port:3306 product:MySQL · 358 total results</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">ISP Sri Lanka*</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#777777;"></div></div>
+          <span class="hbar-val">221</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">MTT Network</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:10%;background:#555555;"></div></div>
+          <span class="hbar-val">23</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">LEARN</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:10%;background:#444444;"></div></div>
+          <span class="hbar-val">22</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">SL Telecom IDC</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:9%;background:#333333;"></div></div>
+          <span class="hbar-val">19</span>
+        </div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;">* Two ISP Sri Lanka organization name variants combined: 190 + 31 = 221</p>
+    </div>
+
+    <h2>PostgreSQL: 38 Indexed Instances</h2>
+    <p>
+      38 PostgreSQL instances were indexed on port 5432. The banner responses visible in the index are largely authentication challenge messages: <code>fe_sendauth: no password supplied</code> is the client-side error returned when a connection is attempted without credentials. Its presence in the index indicates the server responded to the indexer's connection, and that the indexer did not supply a password. It does not establish unauthenticated access was possible.
+    </p>
+    <p>
+      One indexed instance returned <code>FATAL: no pg_hba.conf entry for host</code>, indicating the connection was rejected at the host-based authentication level. Several instances present self-signed certificates alongside the database service. The Lanka Education and Research Network (LEARN) accounts for a meaningful share of the indexed results, reflecting academic infrastructure with database services on public IPs.
+    </p>
+
+    <div class="chart-block">
+      <div class="chart-title">PostgreSQL: Top Organizations</div>
+      <div class="chart-sub">country:LK port:5432 product:PostgreSQL · 38 total results</div>
+      <div class="hbar-chart">
+        <div class="hbar-row">
+          <span class="hbar-label">ISP Sri Lanka*</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#777777;"></div></div>
+          <span class="hbar-val">16</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">LEARN</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:38%;background:#555555;"></div></div>
+          <span class="hbar-val">6</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">Dialog Telekom</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:31%;background:#444444;"></div></div>
+          <span class="hbar-val">5</span>
+        </div>
+        <div class="hbar-row">
+          <span class="hbar-label">LCS Web Hosting</span>
+          <div class="hbar-track"><div class="hbar-fill" style="width:25%;background:#333333;"></div></div>
+          <span class="hbar-val">4</span>
+        </div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;">* ISP Sri Lanka variant names combined: 13 + 3 = 16</p>
+    </div>
+
+    <h2>Notable Patterns</h2>
+
+    <div class="finding-card">
+      <div class="finding-label">MongoDB</div>
+      <div class="finding-title">Two of Five Instances on EOL Versions</div>
+      <div class="finding-body">Two of the five indexed MongoDB instances are running versions the vendor no longer supports: one on 4.0.x (EOL February 2022) and one on 5.0.x (EOL October 2024). Both carry the index's end-of-life product tag. All five instances include "Authentication partially enabled" in their banner responses. Whether that reflects a complete or incomplete authentication configuration is a question for each instance's administrator.</div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-label">Redis</div>
+      <div class="finding-title">One Instance Tagged Compromised, Full INFO Returned Without Challenge</div>
+      <div class="finding-body">Two of nine indexed Redis instances returned full server INFO blocks without an authentication challenge. One of those two carries the index's "compromised" tag. The "compromised" classification is applied by the index based on its own observed indicators; this post does not independently verify that classification. One instance returning server metadata is running Redis 2.8, a version released in 2013 and long past any vendor support window.</div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-label">MySQL</div>
+      <div class="finding-title">Version Distribution Skewed Toward EOL Releases</div>
+      <div class="finding-body">Among the top indexed MySQL versions, the majority are on branches that have passed end-of-life: MySQL 5.5 (EOL 2018), 5.6 (EOL 2021), and 5.7 (EOL October 2023). For database services indexed on public IPs, running versions without active security patch support from the vendor is a compounding concern regardless of authentication configuration.</div>
+    </div>
+
+    <h2>What Is Not Established</h2>
+    <p>
+      This post does not establish that any indexed database instance accepts unauthenticated connections, exposes user data, or has been compromised. With the exception of Redis instances that returned full server metadata without an authentication challenge, the index data reflects version banners and initial connection responses. Authentication state, data contents, and actual access controls are not determinable from this data alone.
+    </p>
+    <p>
+      The finding that 358 MySQL instances, 38 PostgreSQL instances, 9 Redis instances, and 5 MongoDB instances are indexed on public Sri Lankan IPs is itself the primary observation. Database services on public IPs without a clear operational reason represent unnecessary exposure surface, independent of authentication configuration.
+    </p>
+
+    <h2>Summary</h2>
+    <p>
+      410 database service ports indexed across four products. No Elasticsearch. No MSSQL. Two MongoDB instances on EOL versions. Two Redis instances returning server metadata without an authentication challenge, one tagged as compromised by the index. MySQL version distribution skewed toward branches the vendor no longer patches. The editorial rule holds: public data only, patterns not targets.
+    </p>
+
+    <div class="article-tags">
+      <span class="atag">osint</span>
+      <span class="atag">sri-lanka</span>
+      <span class="atag">databases</span>
+      <span class="atag">mongodb</span>
+      <span class="atag">mysql</span>
+      <span class="atag">redis</span>
+      <span class="atag">postgresql</span>
+      <span class="atag">infosec</span>
+      <span class="atag">public-data</span>
+    </div>
+
+    <nav class="series-nav">
+      <a class="nav-prev" href="/blog/post-02-government-https">
+        <span class="label">← Previous in Series</span>
+        <span class="title">Post 02: Government Online</span>
+      </a>
+      <a class="nav-next" href="/blog/post-04-cameras">
+        <span class="label">Next in Series →</span>
+        <span class="title">Post 04: Cameras and Industrial Control</span>
+      </a>
+    </nav>
+
+  </article>
+
+  <footer class="disclaimer">
+    <h4>Legal Disclaimer and Methodology Notice</h4>
+    <p>
+      All data presented in this article was obtained exclusively through publicly accessible internet indexing data. No systems were accessed, probed, tested, logged into, or interacted with in any manner. No unauthorized access was performed. Banner content quoted in this post is reproduced from index data representing initial connection responses recorded by the indexing service.
+    </p>
+    <p>
+      Version banners and authentication challenge messages are standard initial responses for several database products and do not establish that unauthenticated access is possible. The "compromised" tag referenced in this post is a classification applied by the public index based on its own observed indicators and is not an independent assessment by this publication. No specific IP addresses or identifiers that could enable targeted access are published in this article.
+    </p>
+    <p>
+      This content is published for public interest security research and journalistic purposes only. Administrators who identify security issues affecting their own systems are encouraged to contact CERT.LK at incidents@cert.gov.lk.
+    </p>
+    <p style="margin-top:12px;font-size:10px;color:var(--text-dim);">
+      Published Aug 26, 2026 · Source: Public OSINT · Data collected: Aug 26, 2026
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
